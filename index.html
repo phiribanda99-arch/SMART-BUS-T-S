@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Bus</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <script>
+        if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+            window.location.replace('index.php');
+        }
+    </script>
+    <div class="login-shell">
+        <div class="login-card">
+            <h1>Smart Bus</h1>
+            <p class="subtitle">Transport Management System</p>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="role">Login As</label>
+                    <select id="role" name="role" style="width:100%; padding:12px 14px; border:1px solid #cbd5e1; border-radius:10px;">
+                        <option value="passenger">Passenger</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" placeholder="admin@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" name="password" type="password" placeholder="Enter password" required>
+                </div>
+
+                <button type="submit">Login</button>
+            </form>
+
+            <div class="divider">OR</div>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label for="signupRole">Create Account As</label>
+                    <select id="signupRole" name="signupRole" style="width:100%; padding:12px 14px; border:1px solid #cbd5e1; border-radius:10px;">
+                        <option value="passenger">Passenger</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupName">Full Name</label>
+                    <input id="signupName" name="signupName" type="text" placeholder="John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupEmail">Email</label>
+                    <input id="signupEmail" name="signupEmail" type="email" placeholder="newuser@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="signupPassword">Password</label>
+                    <input id="signupPassword" name="signupPassword" type="password" placeholder="Create password" required>
+                </div>
+
+                <button type="submit" class="btn-secondary">Create Account</button>
+            </form>
+
+            <div id="messageBox" class="alert" style="display:none; margin-top:16px;"></div>
+
+            <div style="margin-top: 14px; text-align: center; color: #4b5563; font-size: 14px;">
+                Demo admin: admin@example.com / Admin@123
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const messageBox = document.getElementById('messageBox');
+
+        function showMessage(text, type) {
+            messageBox.textContent = text;
+            messageBox.className = 'alert ' + (type === 'success' ? 'alert-success' : 'alert-error');
+            messageBox.style.display = 'block';
+        }
+
+        loginForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const role = document.getElementById('role').value;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!email || !password) {
+                showMessage('Please enter both email and password.', 'error');
+                return;
+            }
+
+            if (email === 'admin@example.com' && password === 'Admin@123' && role === 'admin') {
+                localStorage.setItem('smartBusUser', JSON.stringify({ name: 'Admin User', email, role: 'admin' }));
+                window.location.href = 'dashboard.html';
+                return;
+            }
+
+            if (role === 'passenger') {
+                localStorage.setItem('smartBusUser', JSON.stringify({ name: 'Passenger User', email, role: 'passenger' }));
+                window.location.href = 'passenger-dashboard.html';
+                return;
+            }
+
+            showMessage('Incorrect admin login. Use admin@example.com / Admin@123.', 'error');
+        });
+
+        signupForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const role = document.getElementById('signupRole').value;
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value;
+
+            if (!name || !email || !password) {
+                showMessage('Please fill in all signup fields.', 'error');
+                return;
+            }
+
+            localStorage.setItem('smartBusUser', JSON.stringify({ name, email, role }));
+            if (role === 'admin') {
+                window.location.href = 'dashboard.html';
+            } else {
+                window.location.href = 'passenger-dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

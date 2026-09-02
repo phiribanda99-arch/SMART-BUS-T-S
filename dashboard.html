@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="admin-page">
+    <div class="topbar">
+        <div>Smart Bus Admin</div>
+        <div>
+            <span id="welcomeText">Welcome</span>
+            <span style="margin-left: 16px;">|</span>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container dashboard">
+        <h2>Admin Dashboard</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Routes</h3>
+                <strong>12</strong>
+            </div>
+            <div class="stat-card">
+                <h3>Buses</h3>
+                <strong>8</strong>
+            </div>
+            <div class="stat-card">
+                <h3>Drivers</h3>
+                <strong>15</strong>
+            </div>
+            <div class="stat-card">
+                <h3>Bookings</h3>
+                <strong>224</strong>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="primary-button" type="button">Add New Route</button>
+            <button type="button">Manage Buses</button>
+            <button type="button">View Reports</button>
+        </div>
+
+        <div class="smart-features admin-features">
+            <div class="feature-card success">
+                <span class="feature-label">Fleet Health</span>
+                <strong>96%</strong>
+                <small>8 buses on schedule</small>
+            </div>
+            <div class="feature-card info">
+                <span class="feature-label">Daily Revenue</span>
+                <strong>K 28,500</strong>
+                <small>+12% vs yesterday</small>
+            </div>
+            <div class="feature-card warning">
+                <span class="feature-label">Peak Hours</span>
+                <strong>07:30–09:00</strong>
+                <small>High demand on urban routes</small>
+            </div>
+            <div class="feature-card danger">
+                <span class="feature-label">Alerts</span>
+                <strong>2 Active</strong>
+                <small>Weather and maintenance checks</small>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>Route Management</h3>
+            <form class="route-form">
+                <div class="form-group">
+                    <label>Route Code</label>
+                    <input type="text" value="R004">
+                </div>
+                <div class="form-group">
+                    <label>Origin</label>
+                    <input type="text" value="City Center">
+                </div>
+                <div class="form-group">
+                    <label>Destination</label>
+                    <input type="text" value="Airport Road">
+                </div>
+                <div class="form-group">
+                    <label>Distance (km)</label>
+                    <input type="text" value="25.5">
+                </div>
+                <div class="form-group">
+                    <label>Travel Time</label>
+                    <input type="text" value="45 mins">
+                </div>
+                <div class="form-group">
+                    <label>Fare</label>
+                    <input type="text" value="$250">
+                </div>
+            </form>
+            <button class="primary-button" type="button" style="margin-top: 12px;">Save Route</button>
+        </div>
+
+        <div class="panel">
+            <h3>Upcoming Schedules</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Route</th>
+                        <th>Origin → Destination</th>
+                        <th>Departure</th>
+                        <th>Seats Left</th>
+                        <th>Fare</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>R001</td>
+                        <td>Central Station → North Park</td>
+                        <td>2026-09-05 08:00</td>
+                        <td>18</td>
+                        <td>$200.00</td>
+                    </tr>
+                    <tr>
+                        <td>R002</td>
+                        <td>Central Station → East Market</td>
+                        <td>2026-09-05 09:00</td>
+                        <td>12</td>
+                        <td>$150.00</td>
+                    </tr>
+                    <tr>
+                        <td>R003</td>
+                        <td>North Park → East Market</td>
+                        <td>2026-09-05 10:30</td>
+                        <td>22</td>
+                        <td>$180.00</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const storedUser = JSON.parse(localStorage.getItem('smartBusUser') || '{}');
+        const name = storedUser.name || 'Admin';
+        document.getElementById('welcomeText').textContent = 'Welcome, ' + name;
+    </script>
+</body>
+</html>

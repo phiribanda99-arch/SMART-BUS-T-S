@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Passenger Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="passenger-page">
+    <div class="topbar">
+        <div>Smart Bus Passenger</div>
+        <div>
+            <span id="welcomeText">Welcome</span>
+            <span style="margin-left: 16px;">|</span>
+            <a href="index.html">Logout</a>
+        </div>
+    </div>
+
+    <div class="container dashboard">
+        <h2>Passenger Dashboard</h2>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Trips</h3>
+                <strong>4</strong>
+            </div>
+            <div class="stat-card">
+                <h3>Wallet</h3>
+                <strong>$120</strong>
+            </div>
+            <div class="stat-card">
+                <h3>Tickets</h3>
+                <strong>2</strong>
+            </div>
+            <div class="stat-card">
+                <h3>Rewards</h3>
+                <strong>15</strong>
+            </div>
+        </div>
+
+        <div class="action-bar">
+            <button class="primary-button" type="button">Book a Seat</button>
+            <button type="button">My Tickets</button>
+            <button type="button">Trip History</button>
+        </div>
+
+        <div class="smart-features">
+            <div class="feature-card success">
+                <span class="feature-label">Live ETA</span>
+                <strong>12 min</strong>
+                <small>Next bus to Lusaka</small>
+            </div>
+            <div class="feature-card info">
+                <span class="feature-label">Reward Points</span>
+                <strong>1,250</strong>
+                <small>15% off your next trip</small>
+            </div>
+            <div class="feature-card warning">
+                <span class="feature-label">Road Status</span>
+                <strong>Clear</strong>
+                <small>Low traffic on the route</small>
+            </div>
+            <div class="feature-card danger">
+                <span class="feature-label">Safety Alert</span>
+                <strong>On Track</strong>
+                <small>Driver verified and monitored</small>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h3>Book a Trip</h3>
+            <form class="route-form" id="routeSearchForm">
+                <div class="form-group">
+                    <label>From Province</label>
+                    <select id="fromProvince">
+                        <option value="">Select province</option>
+                        <option>Central</option>
+                        <option>Copperbelt</option>
+                        <option>Eastern</option>
+                        <option>Luapula</option>
+                        <option>Lusaka</option>
+                        <option>Muchinga</option>
+                        <option>North-Western</option>
+                        <option>Northern</option>
+                        <option>Southern</option>
+                        <option>Western</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>To Province</label>
+                    <select id="toProvince">
+                        <option value="">Select province</option>
+                        <option>Central</option>
+                        <option>Copperbelt</option>
+                        <option>Eastern</option>
+                        <option>Luapula</option>
+                        <option>Lusaka</option>
+                        <option>Muchinga</option>
+                        <option>North-Western</option>
+                        <option>Northern</option>
+                        <option>Southern</option>
+                        <option>Western</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Travel Date</label>
+                    <input id="travelDate" type="date" value="2026-09-05">
+                </div>
+                <div class="form-group">
+                    <label>Passengers</label>
+                    <input id="passengerCount" type="number" value="1" min="1">
+                </div>
+            </form>
+            <button id="searchRoutesBtn" class="primary-button" type="button" style="margin-top: 12px;">Search Routes</button>
+            <div id="routeMessage" class="alert hidden" aria-live="polite"></div>
+        </div>
+
+        <div id="tripResultsPanel" class="panel hidden">
+            <h3>Available Trips</h3>
+            <div id="tripResults" class="route-list"></div>
+        </div>
+
+        <div id="seatSelectionPanel" class="panel hidden">
+            <h3>Select a Seat</h3>
+            <div id="selectedRouteSummary" class="route-summary"></div>
+            <div id="seatGrid" class="seat-grid"></div>
+            <button id="continueToPaymentBtn" class="primary-button" type="button" style="margin-top: 18px;">Continue to Payment</button>
+        </div>
+
+        <div id="paymentPanel" class="panel hidden">
+            <h3>Confirm Passenger & Pay</h3>
+            <form class="route-form" id="paymentForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input id="passengerName" type="text" placeholder="Enter passenger name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input id="passengerPhone" type="text" placeholder="Enter phone number" required>
+                </div>
+                <div class="form-group">
+                    <label>Payment Method</label>
+                    <select id="paymentMethod">
+                        <option value="Mobile Money">Mobile Money</option>
+                        <option value="Bank Card">Bank Card</option>
+                        <option value="Wallet">Wallet</option>
+                    </select>
+                </div>
+            </form>
+            <div id="paymentStatus" class="alert hidden" aria-live="polite"></div>
+            <button id="payNowBtn" class="primary-button" type="button">Pay & Confirm Booking</button>
+            <button id="retryPaymentBtn" class="btn btn-secondary hidden" type="button">Retry Payment</button>
+        </div>
+
+        <div id="ticketPanel" class="panel hidden">
+            <h3>Booking Ticket</h3>
+            <div id="ticketDetails" class="ticket-card"></div>
+        </div>
+
+        <div class="panel">
+            <h3>Travel History</h3>
+            <ul id="travelHistoryList" class="history-list"></ul>
+        </div>
+
+        <div class="panel">
+            <h3>Available Routes</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Route</th>
+                        <th>From</th>
+                        <th>To</th>
+                        <th>Time</th>
+                        <th>Fare</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>R001</td>
+                        <td>Central Station</td>
+                        <td>North Park</td>
+                        <td>08:00</td>
+                        <td>$200</td>
+                    </tr>
+                    <tr>
+                        <td>R002</td>
+                        <td>Central Station</td>
+                        <td>East Market</td>
+                        <td>09:00</td>
+                        <td>$150</td>
+                    </tr>
+                    <tr>
+                        <td>R003</td>
+                        <td>North Park</td>
+                        <td>East Market</td>
+                        <td>10:30</td>
+                        <td>$180</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const storedUser = JSON.parse(localStorage.getItem('smartBusUser') || '{}');
+        const name = storedUser.name || 'Passenger';
+        document.getElementById('welcomeText').textContent = 'Welcome, ' + name;
+
+        const routes = [
+            {
+                id: 'R001',
+                fromProvince: 'Lusaka',
+                toProvince: 'Copperbelt',
+                from: 'Lusaka Central',
+                to: 'Kitwe',
+                date: '2026-09-05',
+                time: '08:00',
+                fare: 200,
+                seatsBooked: ['A2', 'A5', 'B3']
+            },
+            {
+                id: 'R002',
+                fromProvince: 'Copperbelt',
+                toProvince: 'Eastern',
+                from: 'Ndola',
+                to: 'Chipata',
+                date: '2026-09-05',
+                time: '09:15',
+                fare: 180,
+                seatsBooked: ['A1', 'B2', 'C4']
+            },
+            {
+                id: 'R003',
+                fromProvince: 'Southern',
+                toProvince: 'Lusaka',
+                from: 'Livingstone',
+                to: 'Lusaka',
+                date: '2026-09-05',
+                time: '11:00',
+                fare: 260,
+                seatsBooked: ['A4', 'D1']
+            },
+            {
+                id: 'R004',
+                fromProvince: 'Eastern',
+                toProvince: 'Northern',
+                from: 'Chipata',
+                to: 'Kasama',
+                date: '2026-09-06',
+                time: '07:30',
+                fare: 220,
+                seatsBooked: ['B1', 'C3']
+            }
+        ];
+
+        const tripResultsPanel = document.getElementById('tripResultsPanel');
+        const tripResults = document.getElementById('tripResults');
+        const routeMessage = document.getElementById('routeMessage');
+        const seatSelectionPanel = document.getElementById('seatSelectionPanel');
+        const paymentPanel = document.getElementById('paymentPanel');
+        const ticketPanel = document.getElementById('ticketPanel');
+        const selectedRouteSummary = document.getElementById('selectedRouteSummary');
+        const seatGrid = document.getElementById('seatGrid');
+        const searchRoutesBtn = document.getElementById('searchRoutesBtn');
+        const continueToPaymentBtn = document.getElementById('continueToPaymentBtn');
+        const payNowBtn = document.getElementById('payNowBtn');
+        const retryPaymentBtn = document.getElementById('retryPaymentBtn');
+        const paymentStatus = document.getElementById('paymentStatus');
+        const ticketDetails = document.getElementById('ticketDetails');
+        const travelHistoryList = document.getElementById('travelHistoryList');
+
+        let selectedRoute = null;
+        let selectedSeat = null;
+        let paymentSucceeded = false;
+
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = 'alert ' + type;
+            element.classList.remove('hidden');
+        }
+
+        function hideMessage(element) {
+            element.classList.add('hidden');
+        }
+
+        function loadTravelHistory() {
+            const savedHistory = JSON.parse(localStorage.getItem('smartBusTravelHistory') || '[]');
+            if (!savedHistory.length) {
+                travelHistoryList.innerHTML = '<li class="empty-state">No travel history yet.</li>';
+                return;
+            }
+
+            travelHistoryList.innerHTML = savedHistory.map(item =>
+                '<li>' + item + '</li>'
+            ).join('');
+        }
+
+        function saveTravelHistory(items) {
+            localStorage.setItem('smartBusTravelHistory', JSON.stringify(items));
+            loadTravelHistory();
+        }
+
+        function getAvailableSeats(route) {
+            const allSeats = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
+            return allSeats.filter(seat => !route.seatsBooked.includes(seat));
+        }
+
+        function renderTripResults() {
+            const fromProvince = document.getElementById('fromProvince').value;
+            const toProvince = document.getElementById('toProvince').value;
+            const traveDate = document.getElementById('travelDate').value;
+
+            const filteredRoutes = routes.filter(route => {
+                const matchesFrom = !fromProvince || route.fromProvince === fromProvince;
+                const matchesTo = !toProvince || route.toProvince === toProvince;
+                const matchesDate = !traveDate || route.date === traveDate;
+                return matchesFrom && matchesTo && matchesDate;
+            });
+
+            if (!filteredRoutes.length) {
+                tripResults.innerHTML = '<p>No trips available for the selected route and date.</p>';
+                tripResultsPanel.classList.remove('hidden');
+                return;
+            }
+
+            tripResults.innerHTML = filteredRoutes.map(route => {
+                const availableSeatCount = getAvailableSeats(route).length;
+                return `
+                    <div class="route-card">
+                        <h4>${route.id}</h4>
+                        <p><strong>From:</strong> ${route.from}</p>
+                        <p><strong>To:</strong> ${route.to}</p>
+                        <p><strong>Date:</strong> ${route.date}</p>
+                        <p><strong>Time:</strong> ${route.time}</p>
+                        <div class="route-meta">
+                            <span class="route-fare">K${route.fare}</span>
+                            <span>${availableSeatCount} seats left</span>
+                        </div>
+                        <button class="primary-button select-route-btn" type="button" data-route-id="${route.id}">Select Trip</button>
+                    </div>
+                `;
+            }).join('');
+
+            tripResults.querySelectorAll('.select-route-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    const routeId = this.getAttribute('data-route-id');
+                    selectedRoute = routes.find(route => route.id === routeId);
+                    selectedSeat = null;
+                    renderSeatGrid();
+                    tripResultsPanel.classList.add('hidden');
+                    seatSelectionPanel.classList.remove('hidden');
+                    paymentPanel.classList.add('hidden');
+                    ticketPanel.classList.add('hidden');
+                });
+            });
+
+            tripResultsPanel.classList.remove('hidden');
+        }
+
+        function renderSeatGrid() {
+            const allSeats = ['A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'D1', 'D2', 'D3', 'D4', 'D5', 'D6'];
+            seatGrid.innerHTML = allSeats.map(seat => {
+                const booked = selectedRoute.seatsBooked.includes(seat);
+                const selectedClass = selectedSeat === seat ? 'selected' : '';
+                const disabled = booked ? 'disabled' : '';
+                return `<button class="seat-btn ${selectedClass} ${booked ? 'booked' : ''}" data-seat="${seat}" ${disabled} ${booked ? 'type="button"' : 'type="button"'}>${seat}</button>`;
+            }).join('');
+
+            selectedRouteSummary.innerHTML = `
+                <strong>${selectedRoute.id}</strong> · ${selectedRoute.from} → ${selectedRoute.to}<br>
+                ${selectedRoute.date} at ${selectedRoute.time} · K${selectedRoute.fare}
+            `;
+
+            seatGrid.querySelectorAll('.seat-btn').forEach(button => {
+                const seat = button.getAttribute('data-seat');
+                const booked = selectedRoute.seatsBooked.includes(seat);
+                if (!booked) {
+                    button.addEventListener('click', function () {
+                        selectedSeat = seat;
+                        renderSeatGrid();
+                    });
+                }
+            });
+        }
+
+        searchRoutesBtn.addEventListener('click', function () {
+            const fromProvince = document.getElementById('fromProvince').value;
+            const toProvince = document.getElementById('toProvince').value;
+            const travelDate = document.getElementById('travelDate').value;
+
+            if (!fromProvince || !toProvince || !travelDate) {
+                showMessage(routeMessage, 'Please select province and travel date.', 'alert-error');
+                return;
+            }
+
+            hideMessage(routeMessage);
+            renderTripResults();
+        });
+
+        continueToPaymentBtn.addEventListener('click', function () {
+            if (!selectedSeat) {
+                showMessage(routeMessage, 'Please select an available seat.', 'alert-error');
+                return;
+            }
+
+            seatSelectionPanel.classList.add('hidden');
+            paymentPanel.classList.remove('hidden');
+            hideMessage(routeMessage);
+        });
+
+        payNowBtn.addEventListener('click', function () {
+            const passengerName = document.getElementById('passengerName').value.trim();
+            const passengerPhone = document.getElementById('passengerPhone').value.trim();
+
+            if (!passengerName || !passengerPhone) {
+                paymentSucceeded = false;
+                showMessage(paymentStatus, 'Payment failed. Please enter your name and phone number.', 'alert-error');
+                retryPaymentBtn.classList.remove('hidden');
+                return;
+            }
+
+            paymentSucceeded = true;
+            showMessage(paymentStatus, 'Payment successful. Booking confirmed.', 'alert-success');
+            retryPaymentBtn.classList.add('hidden');
+
+            const route = selectedRoute;
+            route.seatsBooked.push(selectedSeat);
+            const historyEntry = `${route.id} | ${route.from} → ${route.to} | ${route.date} | Seat ${selectedSeat} | ${passengerName}`;
+            const currentHistory = JSON.parse(localStorage.getItem('smartBusTravelHistory') || '[]');
+            currentHistory.unshift(historyEntry);
+            saveTravelHistory(currentHistory);
+
+            ticketDetails.innerHTML = `
+                <p><strong>Ticket ID:</strong> TKT-${Date.now().toString().slice(-6)}</p>
+                <p><strong>Passenger:</strong> ${passengerName}</p>
+                <p><strong>Route:</strong> ${route.id} · ${route.from} → ${route.to}</p>
+                <p><strong>Date:</strong> ${route.date} at ${route.time}</p>
+                <p><strong>Seat:</strong> ${selectedSeat}</p>
+                <p><strong>Payment:</strong> ${document.getElementById('paymentMethod').value}</p>
+            `;
+            paymentPanel.classList.add('hidden');
+            ticketPanel.classList.remove('hidden');
+        });
+
+        retryPaymentBtn.addEventListener('click', function () {
+            paymentSucceeded = false;
+            paymentStatus.classList.add('hidden');
+            retryPaymentBtn.classList.add('hidden');
+            paymentPanel.classList.remove('hidden');
+            seatSelectionPanel.classList.remove('hidden');
+        });
+
+        loadTravelHistory();
+    </script>
+</body>
+</html>
