@@ -85,7 +85,7 @@ $schedules = $pdo->query(
      LIMIT 5'
 )->fetchAll();
 $routes = $pdo->query('SELECT id, route_code, origin, destination FROM routes WHERE status = "active" ORDER BY route_code')->fetchAll();
-$buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buses WHERE status <> "Inactive" ORDER BY registration_number')->fetchAll();
+$buses = $pdo->query('SELECT id, registration_number, make, model, year, bus_type, seating_capacity, status FROM buses WHERE status <> "Inactive" ORDER BY registration_number')->fetchAll();
 ?>
 <!doctype html>
 <html lang="en">
@@ -130,7 +130,7 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
 
         <div class="management-grid">
             <div class="panel">
-                <h3>Register Bus</h3>
+                <h3>Bus Management</h3>
                 <form method="post" class="route-form">
                     <input type="hidden" name="action" value="add_bus">
                     <input name="registration_number" placeholder="Registration number" required>
@@ -141,6 +141,33 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
                     <input name="seating_capacity" type="number" min="1" placeholder="Seats" required>
                     <button class="primary-button" type="submit">Register Bus</button>
                 </form>
+
+                <div class="table-wrap">
+                    <h4>Registered Buses at Lusaka Intercity Terminal</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Registration</th>
+                                <th>Make and Model</th>
+                                <th>Type</th>
+                                <th>Seats</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($buses as $bus): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($bus['registration_number']); ?></td>
+                                    <td><?php echo htmlspecialchars(trim($bus['make'] . ' ' . $bus['model'])); ?><?php if ($bus['year']): ?> (<?php echo (int) $bus['year']; ?>)<?php endif; ?></td>
+                                    <td><?php echo htmlspecialchars($bus['bus_type'] ?: 'Standard'); ?></td>
+                                    <td><?php echo (int) $bus['seating_capacity']; ?></td>
+                                    <td><?php echo htmlspecialchars($bus['status']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (!$buses): ?><tr><td colspan="5">No buses have been registered yet.</td></tr><?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="panel">
                 <h3>Create Route</h3>

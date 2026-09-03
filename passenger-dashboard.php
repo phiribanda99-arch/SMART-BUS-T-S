@@ -134,11 +134,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'book'
 $from = trim($_GET['from'] ?? '');
 $to = trim($_GET['to'] ?? '');
 $date = trim($_GET['travel_date'] ?? '');
+$busId = (int) ($_GET['bus_id'] ?? 0);
+$busList = $pdo->query('SELECT id, registration_number, make, model FROM buses WHERE status <> "Inactive" ORDER BY registration_number')->fetchAll();
 $schedules = [];
-if ($from !== '' || $to !== '' || $date !== '') {
+if ($from !== '' || $to !== '' || $date !== '' || $busId > 0) {
     $stmt = $pdo->prepare(
         'SELECT s.id, s.travel_date, s.departure_time, s.arrival_time, s.fare, s.available_seats,
-                r.route_code, r.origin, r.destination, b.registration_number
+            r.route_code, r.origin, r.destination, b.registration_number, b.make, b.model
          FROM schedules s
          JOIN routes r ON r.id = s.route_id
          JOIN buses b ON b.id = s.bus_id
@@ -146,6 +148,7 @@ if ($from !== '' || $to !== '' || $date !== '') {
            AND (:from = "" OR r.origin LIKE :from_like)
            AND (:to = "" OR r.destination LIKE :to_like)
            AND (:travel_date = "" OR s.travel_date = :travel_date)
+           AND (:bus_id = 0 OR s.bus_id = :bus_id)
          ORDER BY s.travel_date, s.departure_time'
     );
     $stmt->execute([
@@ -153,7 +156,8 @@ if ($from !== '' || $to !== '' || $date !== '') {
         'from_like' => '%' . $from . '%',
         'to' => $to,
         'to_like' => '%' . $to . '%',
-        'travel_date' => $date
+        'travel_date' => $date,
+        'bus_id' => $busId
     ]);
     $schedules = $stmt->fetchAll();
 }
@@ -192,6 +196,7 @@ $history = $historyStmt->fetchAll();
                 <div class="form-group"><label for="from">From</label><input id="from" name="from" value="<?php echo e($from); ?>" placeholder="Nairobi or Lusaka"></div>
                 <div class="form-group"><label for="to">To</label><input id="to" name="to" value="<?php echo e($to); ?>" placeholder="Mombasa or Kitwe"></div>
                 <div class="form-group"><label for="travel_date">Travel Date</label><input id="travel_date" name="travel_date" type="date" value="<?php echo e($date); ?>"></div>
+                <div class="form-group"><label for="bus_id">Select Bus</label><select id="bus_id" name="bus_id"><option value="0">All available buses</option><?php foreach ($busList as $bus): ?><option value="<?php echo (int) $bus['id']; ?>"<?php echo $busId === (int) $bus['id'] ? ' selected' : ''; ?>><?php echo e($bus['registration_number'] . ' - ' . trim($bus['make'] . ' ' . $bus['model'])); ?></option><?php endforeach; ?></select></div>
                 <div class="form-group"><label>&nbsp;</label><button class="primary-button" type="submit">Search Trips</button></div>
             </form>
         </div>
@@ -202,7 +207,7 @@ $history = $historyStmt->fetchAll();
                     <div class="route-card">
                         <h4><?php echo e($schedule['route_code']); ?>: <?php echo e($schedule['origin']); ?> to <?php echo e($schedule['destination']); ?></h4>
                         <p><?php echo e($schedule['travel_date']); ?> | <?php echo e($schedule['departure_time']); ?> - <?php echo e($schedule['arrival_time']); ?></p>
-                        <p>Bus <?php echo e($schedule['registration_number']); ?> | <?php echo (int) $schedule['available_seats']; ?> seats available</p>
+                        <p>Selected bus: <?php echo e($schedule['registration_number'] . ' - ' . trim($schedule['make'] . ' ' . $schedule['model'])); ?> | <?php echo (int) $schedule['available_seats']; ?> seats available</p>
                         <p class="route-fare">K<?php echo number_format((float) $schedule['fare'], 2); ?></p>
                         <?php if ((int) $schedule['available_seats'] > 0): ?>
                             <form method="post" class="booking-form">

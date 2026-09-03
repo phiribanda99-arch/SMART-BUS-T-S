@@ -216,6 +216,16 @@ button, .btn {
     margin-top: 24px;
 }
 
+.table-wrap {
+    margin-top: 24px;
+    overflow-x: auto;
+}
+
+.table-wrap h4 {
+    margin: 0 0 12px;
+    color: #374151;
+}
+
 .admin-page .panel {
     box-shadow: 0 10px 25px rgba(37, 99, 235, 0.12);
 }
