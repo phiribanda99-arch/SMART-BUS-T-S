@@ -93,7 +93,7 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard - Smart Bus</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <div class="topbar">
@@ -107,6 +107,9 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
 
     <div class="container dashboard">
         <h2>Dashboard</h2>
+        <div class="action-bar">
+            <a class="btn primary-button" href="modules/admin/management.php">Open Management Modules</a>
+        </div>
         <?php if ($notice): ?><div class="alert <?php echo $noticeType === 'success' ? 'alert-success' : 'alert-error'; ?>"><?php echo htmlspecialchars($notice); ?></div><?php endif; ?>
 
         <div class="stats-grid">

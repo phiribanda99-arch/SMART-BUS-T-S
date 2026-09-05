@@ -2,7 +2,8 @@
 
 function dbConnect(): PDO
 {
-    $config = require __DIR__ . '/../config/database.php';
+    $config = require __DIR__ . '/../config/config.php';
+    $config = $config['db'];
     $dsn = sprintf(
         'mysql:host=%s;port=%d;dbname=%s;charset=%s',
         $config['host'],
@@ -34,6 +35,13 @@ function isLoggedIn(): bool
     return !empty($_SESSION['user_id']);
 }
 
+function requireLogin(): void
+{
+    if (!isLoggedIn()) {
+        redirect('/index.php');
+    }
+}
+
 function currentUser(): ?array
 {
     if (!isLoggedIn()) {
@@ -49,12 +57,12 @@ function currentUser(): ?array
 function requireRole(string $role): void
 {
     if (!isLoggedIn()) {
-        redirect('login.php');
+        redirect('index.php');
     }
 
     $user = currentUser();
     if (!$user || $user['role'] !== $role) {
-        redirect('login.php');
+        redirect('index.php');
     }
 }
 

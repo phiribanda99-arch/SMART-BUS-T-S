@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS smart_bus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE smart_bus;
+CREATE DATABASE IF NOT EXISTS smartbus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE smartbus;
 
 CREATE TABLE users (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,

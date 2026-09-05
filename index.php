@@ -20,7 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute(['email' => $email]);
             $user = $stmt->fetch();
 
-            if ($user && $user['password'] && password_verify($password, $user['password'])) {
+            if ($user && $user['status'] === 'active' && $user['password'] && password_verify($password, $user['password'])) {
+                session_regenerate_id(true);
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['user_name'] = $user['full_name'] ?: 'Passenger';
                 $_SESSION['user_role'] = $user['role'];
@@ -45,6 +46,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             $notice = 'Please enter a valid email address.';
             $noticeType = 'error';
+        } elseif (strlen($password) < 8) {
+            $notice = 'Password must be at least 8 characters.';
+            $noticeType = 'error';
         } else {
             $check = $pdo->prepare('SELECT id FROM users WHERE email = :email LIMIT 1');
             $check->execute(['email' => $email]);
@@ -63,6 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ]);
 
                 $userId = (int) $pdo->lastInsertId();
+                session_regenerate_id(true);
                 $_SESSION['user_id'] = $userId;
                 $_SESSION['user_name'] = $fullName;
                 $_SESSION['user_role'] = 'passenger';
@@ -80,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Smart Bus</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
     <div class="login-shell">

@@ -269,21 +269,10 @@ th {
     box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
 }
 
-.feature-card.success {
-    border-left: 5px solid #16a34a;
-}
-
-.feature-card.info {
-    border-left: 5px solid #2563eb;
-}
-
-.feature-card.warning {
-    border-left: 5px solid #f59e0b;
-}
-
-.feature-card.danger {
-    border-left: 5px solid #ef4444;
-}
+.feature-card.success { border-left: 5px solid #16a34a; }
+.feature-card.info { border-left: 5px solid #2563eb; }
+.feature-card.warning { border-left: 5px solid #f59e0b; }
+.feature-card.danger { border-left: 5px solid #ef4444; }
 
 .feature-label {
     display: block;
@@ -302,13 +291,8 @@ th {
     margin-bottom: 6px;
 }
 
-.feature-card small {
-    color: #4b5563;
-}
-
-.hidden {
-    display: none !important;
-}
+.feature-card small { color: #4b5563; }
+.hidden { display: none !important; }
 
 .route-list {
     display: grid;
@@ -323,15 +307,8 @@ th {
     padding: 16px;
 }
 
-.route-card h4 {
-    margin: 0 0 8px;
-    color: #111827;
-}
-
-.route-card p {
-    margin: 6px 0;
-    color: #374151;
-}
+.route-card h4 { margin: 0 0 8px; color: #111827; }
+.route-card p { margin: 6px 0; color: #374151; }
 
 .route-meta {
     display: flex;
@@ -341,17 +318,8 @@ th {
     margin-top: 14px;
 }
 
-.route-fare {
-    font-weight: 700;
-    color: #1d4ed8;
-}
-
-.select-route-btn,
-.seat-btn {
-    width: auto;
-    min-width: 120px;
-    margin-top: 12px;
-}
+.route-fare { font-weight: 700; color: #1d4ed8; }
+.select-route-btn, .seat-btn { width: auto; min-width: 120px; margin-top: 12px; }
 
 .route-summary {
     background: #eff6ff;
@@ -379,17 +347,8 @@ th {
     font-weight: 700;
 }
 
-.seat-btn.selected {
-    background: linear-gradient(135deg, #1d4ed8, #2563eb);
-    color: #fff;
-}
-
-.seat-btn.booked {
-    background: #fca5a5;
-    color: #7f1d1d;
-    cursor: not-allowed;
-    opacity: 0.8;
-}
+.seat-btn.selected { background: linear-gradient(135deg, #1d4ed8, #2563eb); color: #fff; }
+.seat-btn.booked { background: #fca5a5; color: #7f1d1d; cursor: not-allowed; opacity: 0.8; }
 
 .ticket-card {
     background: linear-gradient(135deg, #f0fdf4, #ecfeff);
@@ -399,25 +358,10 @@ th {
     color: #14532d;
 }
 
-.ticket-card p {
-    margin: 8px 0;
-}
-
-.history-list {
-    padding-left: 18px;
-    margin: 0;
-    color: #1f2937;
-}
-
-.history-list li {
-    margin-bottom: 10px;
-}
-
-.empty-state {
-    color: #6b7280;
-    list-style: none;
-    margin-left: -18px;
-}
+.ticket-card p { margin: 8px 0; }
+.history-list { padding-left: 18px; margin: 0; color: #1f2937; }
+.history-list li { margin-bottom: 10px; }
+.empty-state { color: #6b7280; list-style: none; margin-left: -18px; }
 
 .route-form {
     display: grid;
@@ -426,14 +370,8 @@ th {
     margin: 24px 0;
 }
 
-.route-form .form-group {
-    margin-bottom: 0;
-}
-
-.route-form input,
-.route-form select {
-    min-width: 0;
-}
+.route-form .form-group { margin-bottom: 0; }
+.route-form input, .route-form select { min-width: 0; }
 
 .management-grid {
     display: grid;
@@ -441,43 +379,13 @@ th {
     gap: 24px;
 }
 
-.booking-form {
-    display: grid;
-    gap: 8px;
-    margin-top: 14px;
-}
-
-.booking-form input,
-.booking-form select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-}
-
-.route-form input,
-.route-form select {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 10px;
-}
-
-.admin-page .primary-button {
-    background: linear-gradient(90deg, #1d4ed8, #2563eb);
-}
-
-.passenger-page .primary-button {
-    background: linear-gradient(90deg, #1b4332, #2d6a4f);
-}
+.booking-form { display: grid; gap: 8px; margin-top: 14px; }
+.booking-form input, .booking-form select { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 8px; }
+.route-form input, .route-form select { width: 100%; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 10px; }
+.admin-page .primary-button { background: linear-gradient(90deg, #1d4ed8, #2563eb); }
+.passenger-page .primary-button { background: linear-gradient(90deg, #1b4332, #2d6a4f); }
 
 @media (max-width: 640px) {
-    .login-card {
-        padding: 24px 18px;
-    }
-
-    .topbar {
-        flex-direction: column;
-        gap: 8px;
-    }
+    .login-card { padding: 24px 18px; }
+    .topbar { flex-direction: column; gap: 8px; }
 }
