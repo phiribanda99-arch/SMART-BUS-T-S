@@ -48,7 +48,9 @@ CREATE TABLE routes (
     id INT UNSIGNED NOT NULL AUTO_INCREMENT,
     route_code VARCHAR(50) NOT NULL UNIQUE,
     origin VARCHAR(120) NOT NULL,
+    origin_district VARCHAR(120) NOT NULL,
     destination VARCHAR(120) NOT NULL,
+    destination_district VARCHAR(120) NOT NULL,
     distance_km DECIMAL(8,2) DEFAULT NULL,
     estimated_duration VARCHAR(50) DEFAULT NULL,
     fare DECIMAL(10,2) NOT NULL DEFAULT 0.00,
@@ -152,13 +154,13 @@ VALUES
 ('KDA 404D', 'Isuzu', 'Urban', 2019, 'City', 30, NULL, 'Maintenance'),
 ('KDA 505E', 'Toyota', 'Coaster', 2023, 'Mini', 24, NULL, 'Available');
 
-INSERT INTO routes (route_code, origin, destination, distance_km, estimated_duration, fare, status)
+INSERT INTO routes (route_code, origin, origin_district, destination, destination_district, distance_km, estimated_duration, fare, status)
 VALUES
-('R001', 'Nairobi', 'Mombasa', 480.00, '8 hours', 1500.00, 'active'),
-('R002', 'Nairobi', 'Kisumu', 350.50, '6 hours', 1200.00, 'active'),
-('R003', 'Nairobi', 'Nakuru', 160.00, '3 hours', 700.00, 'active'),
-('R004', 'Kisumu', 'Nairobi', 350.50, '6 hours', 1200.00, 'active'),
-('R005', 'Mombasa', 'Nairobi', 480.00, '8 hours', 1500.00, 'active');
+('R001', 'Lusaka', 'Lusaka', 'Copperbelt', 'Kitwe', 480.00, '8 hours', 1500.00, 'active'),
+('R002', 'Lusaka', 'Lusaka', 'Central', 'Kabwe', 350.50, '6 hours', 1200.00, 'active'),
+('R003', 'Lusaka', 'Lusaka', 'Southern', 'Livingstone', 470.00, '7 hours', 1400.00, 'active'),
+('R004', 'Copperbelt', 'Kitwe', 'Lusaka', 'Lusaka', 480.00, '8 hours', 1500.00, 'active'),
+('R005', 'Southern', 'Livingstone', 'Lusaka', 'Lusaka', 470.00, '7 hours', 1400.00, 'active');
 
 INSERT INTO schedules (route_id, bus_id, travel_date, departure_time, arrival_time, fare, available_seats, status)
 VALUES

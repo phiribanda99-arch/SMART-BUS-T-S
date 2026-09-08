@@ -31,11 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $notice = 'Bus registered successfully.';
             $noticeType = 'success';
         } elseif ($action === 'add_route') {
-            $stmt = $pdo->prepare('INSERT INTO routes (route_code, origin, destination, distance_km, estimated_duration, fare) VALUES (:code, :origin, :destination, :distance, :duration, :fare)');
+            $stmt = $pdo->prepare('INSERT INTO routes (route_code, origin, origin_district, destination, destination_district, distance_km, estimated_duration, fare) VALUES (:code, :origin, :origin_district, :destination, :destination_district, :distance, :duration, :fare)');
             $stmt->execute([
                 'code' => trim($_POST['route_code'] ?? ''),
                 'origin' => trim($_POST['origin'] ?? ''),
+                'origin_district' => trim($_POST['origin_district'] ?? ''),
                 'destination' => trim($_POST['destination'] ?? ''),
+                'destination_district' => trim($_POST['destination_district'] ?? ''),
                 'distance' => (float) ($_POST['distance_km'] ?? 0),
                 'duration' => trim($_POST['estimated_duration'] ?? ''),
                 'fare' => (float) ($_POST['fare'] ?? 0)
@@ -84,8 +86,8 @@ $schedules = $pdo->query(
      ORDER BY s.travel_date ASC, s.departure_time ASC
      LIMIT 5'
 )->fetchAll();
-$routes = $pdo->query('SELECT id, route_code, origin, destination FROM routes WHERE status = "active" ORDER BY route_code')->fetchAll();
-$buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buses WHERE status <> "Inactive" ORDER BY registration_number')->fetchAll();
+$routes = $pdo->query('SELECT id, route_code, origin, origin_district, destination, destination_district FROM routes WHERE status = "active" ORDER BY route_code')->fetchAll();
+$buses = $pdo->query('SELECT id, registration_number, make, model, year, bus_type, seating_capacity, status FROM buses WHERE status <> "Inactive" ORDER BY registration_number')->fetchAll();
 ?>
 <!doctype html>
 <html lang="en">
@@ -133,7 +135,7 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
 
         <div class="management-grid">
             <div class="panel">
-                <h3>Register Bus</h3>
+                <h3>Bus Management</h3>
                 <form method="post" class="route-form">
                     <input type="hidden" name="action" value="add_bus">
                     <input name="registration_number" placeholder="Registration number" required>
@@ -144,14 +146,43 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
                     <input name="seating_capacity" type="number" min="1" placeholder="Seats" required>
                     <button class="primary-button" type="submit">Register Bus</button>
                 </form>
+
+                <div class="table-wrap">
+                    <h4>Registered Buses at Lusaka Intercity Terminal</h4>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Registration</th>
+                                <th>Make and Model</th>
+                                <th>Type</th>
+                                <th>Seats</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($buses as $bus): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($bus['registration_number']); ?></td>
+                                    <td><?php echo htmlspecialchars(trim($bus['make'] . ' ' . $bus['model'])); ?><?php if ($bus['year']): ?> (<?php echo (int) $bus['year']; ?>)<?php endif; ?></td>
+                                    <td><?php echo htmlspecialchars($bus['bus_type'] ?: 'Standard'); ?></td>
+                                    <td><?php echo (int) $bus['seating_capacity']; ?></td>
+                                    <td><?php echo htmlspecialchars($bus['status']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                            <?php if (!$buses): ?><tr><td colspan="5">No buses have been registered yet.</td></tr><?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <div class="panel">
                 <h3>Create Route</h3>
                 <form method="post" class="route-form">
                     <input type="hidden" name="action" value="add_route">
                     <input name="route_code" placeholder="Route code" required>
-                    <input name="origin" placeholder="Origin" required>
-                    <input name="destination" placeholder="Destination" required>
+                    <input name="origin" placeholder="Origin province" required>
+                    <input name="origin_district" placeholder="Origin district" required>
+                    <input name="destination" placeholder="Destination province" required>
+                    <input name="destination_district" placeholder="Destination district" required>
                     <input name="distance_km" type="number" step="0.01" placeholder="Distance km">
                     <input name="estimated_duration" placeholder="Duration">
                     <input name="fare" type="number" step="0.01" placeholder="Fare" required>
@@ -164,7 +195,7 @@ $buses = $pdo->query('SELECT id, registration_number, seating_capacity FROM buse
             <h3>Allocate Route Schedule</h3>
             <form method="post" class="route-form">
                 <input type="hidden" name="action" value="add_schedule">
-                <select name="route_id" required><option value="">Select route</option><?php foreach ($routes as $route): ?><option value="<?php echo (int) $route['id']; ?>"><?php echo htmlspecialchars($route['route_code'] . ' - ' . $route['origin'] . ' to ' . $route['destination']); ?></option><?php endforeach; ?></select>
+                <select name="route_id" required><option value="">Select route</option><?php foreach ($routes as $route): ?><option value="<?php echo (int) $route['id']; ?>"><?php echo htmlspecialchars($route['route_code'] . ' - ' . $route['origin'] . ', ' . $route['origin_district'] . ' to ' . $route['destination'] . ', ' . $route['destination_district']); ?></option><?php endforeach; ?></select>
                 <select name="bus_id" required><option value="">Select bus</option><?php foreach ($buses as $bus): ?><option value="<?php echo (int) $bus['id']; ?>"><?php echo htmlspecialchars($bus['registration_number'] . ' (' . $bus['seating_capacity'] . ' seats)'); ?></option><?php endforeach; ?></select>
                 <input name="travel_date" type="date" required>
                 <input name="departure_time" type="time" required>

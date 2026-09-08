@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'book'
         try {
             $pdo->beginTransaction();
             $scheduleStmt = $pdo->prepare(
-                'SELECT s.*, r.route_code, r.origin, r.destination
+                'SELECT s.*, r.route_code, r.origin, r.origin_district, r.destination, r.destination_district
                  FROM schedules s JOIN routes r ON r.id = s.route_id
                  WHERE s.id = :id AND s.status = "scheduled" FOR UPDATE'
             );
@@ -133,27 +133,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'book'
 
 $from = trim($_GET['from'] ?? '');
 $to = trim($_GET['to'] ?? '');
+$fromDistrict = trim($_GET['from_district'] ?? '');
+$toDistrict = trim($_GET['to_district'] ?? '');
 $date = trim($_GET['travel_date'] ?? '');
+$busId = (int) ($_GET['bus_id'] ?? 0);
+$busList = $pdo->query('SELECT id, registration_number, make, model FROM buses WHERE status <> "Inactive" ORDER BY registration_number')->fetchAll();
 $schedules = [];
-if ($from !== '' || $to !== '' || $date !== '') {
+if ($from !== '' || $to !== '' || $fromDistrict !== '' || $toDistrict !== '' || $date !== '' || $busId > 0) {
     $stmt = $pdo->prepare(
         'SELECT s.id, s.travel_date, s.departure_time, s.arrival_time, s.fare, s.available_seats,
-                r.route_code, r.origin, r.destination, b.registration_number
+            r.route_code, r.origin, r.origin_district, r.destination, r.destination_district, b.registration_number, b.make, b.model
          FROM schedules s
          JOIN routes r ON r.id = s.route_id
          JOIN buses b ON b.id = s.bus_id
          WHERE s.status = "scheduled"
            AND (:from = "" OR r.origin LIKE :from_like)
+           AND (:from_district = "" OR r.origin_district LIKE :from_district_like)
            AND (:to = "" OR r.destination LIKE :to_like)
+           AND (:to_district = "" OR r.destination_district LIKE :to_district_like)
            AND (:travel_date = "" OR s.travel_date = :travel_date)
+           AND (:bus_id = 0 OR s.bus_id = :bus_id)
          ORDER BY s.travel_date, s.departure_time'
     );
     $stmt->execute([
         'from' => $from,
         'from_like' => '%' . $from . '%',
+        'from_district' => $fromDistrict,
+        'from_district_like' => '%' . $fromDistrict . '%',
         'to' => $to,
         'to_like' => '%' . $to . '%',
-        'travel_date' => $date
+        'to_district' => $toDistrict,
+        'to_district_like' => '%' . $toDistrict . '%',
+        'travel_date' => $date,
+        'bus_id' => $busId
     ]);
     $schedules = $stmt->fetchAll();
 }
@@ -189,9 +201,12 @@ $history = $historyStmt->fetchAll();
         <div class="panel">
             <h3>Search and Book a Trip</h3>
             <form class="route-form" method="get">
-                <div class="form-group"><label for="from">From</label><input id="from" name="from" value="<?php echo e($from); ?>" placeholder="Nairobi or Lusaka"></div>
-                <div class="form-group"><label for="to">To</label><input id="to" name="to" value="<?php echo e($to); ?>" placeholder="Mombasa or Kitwe"></div>
+                <div class="form-group"><label for="from">From Province</label><input id="from" name="from" value="<?php echo e($from); ?>" placeholder="Lusaka"></div>
+                <div class="form-group"><label for="from_district">From District</label><input id="from_district" name="from_district" value="<?php echo e($fromDistrict); ?>" placeholder="Lusaka District"></div>
+                <div class="form-group"><label for="to">To Province</label><input id="to" name="to" value="<?php echo e($to); ?>" placeholder="Copperbelt"></div>
+                <div class="form-group"><label for="to_district">To District</label><input id="to_district" name="to_district" value="<?php echo e($toDistrict); ?>" placeholder="Kitwe District"></div>
                 <div class="form-group"><label for="travel_date">Travel Date</label><input id="travel_date" name="travel_date" type="date" value="<?php echo e($date); ?>"></div>
+                <div class="form-group"><label for="bus_id">Select Bus</label><select id="bus_id" name="bus_id"><option value="0">All available buses</option><?php foreach ($busList as $bus): ?><option value="<?php echo (int) $bus['id']; ?>"<?php echo $busId === (int) $bus['id'] ? ' selected' : ''; ?>><?php echo e($bus['registration_number'] . ' - ' . trim($bus['make'] . ' ' . $bus['model'])); ?></option><?php endforeach; ?></select></div>
                 <div class="form-group"><label>&nbsp;</label><button class="primary-button" type="submit">Search Trips</button></div>
             </form>
         </div>
@@ -200,9 +215,9 @@ $history = $historyStmt->fetchAll();
             <div class="panel"><h3>Available Trips</h3><div class="route-list">
                 <?php foreach ($schedules as $schedule): ?>
                     <div class="route-card">
-                        <h4><?php echo e($schedule['route_code']); ?>: <?php echo e($schedule['origin']); ?> to <?php echo e($schedule['destination']); ?></h4>
+                        <h4><?php echo e($schedule['route_code']); ?>: <?php echo e($schedule['origin']); ?>, <?php echo e($schedule['origin_district']); ?> to <?php echo e($schedule['destination']); ?>, <?php echo e($schedule['destination_district']); ?></h4>
                         <p><?php echo e($schedule['travel_date']); ?> | <?php echo e($schedule['departure_time']); ?> - <?php echo e($schedule['arrival_time']); ?></p>
-                        <p>Bus <?php echo e($schedule['registration_number']); ?> | <?php echo (int) $schedule['available_seats']; ?> seats available</p>
+                        <p>Selected bus: <?php echo e($schedule['registration_number'] . ' - ' . trim($schedule['make'] . ' ' . $schedule['model'])); ?> | <?php echo (int) $schedule['available_seats']; ?> seats available</p>
                         <p class="route-fare">K<?php echo number_format((float) $schedule['fare'], 2); ?></p>
                         <?php if ((int) $schedule['available_seats'] > 0): ?>
                             <form method="post" class="booking-form">
