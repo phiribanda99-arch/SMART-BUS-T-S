@@ -21,7 +21,20 @@ A PHP and MySQL bus booking and transport management application.
 ## Setup
 
 1. Create a MySQL database named `smartbus` and import `database/smart_bus.sql` into it.
-2. Update the database values in `config/config.php`.
+2. Set the database values in the environment before running the app, or update `config/config.php` for local development.
+
+Example environment variables:
+
+```bash
+export DB_HOST=127.0.0.1
+export DB_PORT=3306
+export DB_NAME=smartbus
+export DB_USER=root
+export DB_PASS=""
+export DB_CHARSET=utf8mb4
+export APP_BASE_URL=/SMART-BUS-T-S
+```
+
 3. From the project directory, create or reset an administrator:
 
 ```text

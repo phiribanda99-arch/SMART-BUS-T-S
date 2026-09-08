@@ -1,9 +1,6 @@
 <?php
-require __DIR__ . '/frontend/pages/login.php';
-?>
-<?php
 session_start();
-require __DIR__ . '/includes/db_connect.php';
+require __DIR__ . '/../../backend/includes/db_connect.php';
 
 $notice = '';
 $noticeType = '';
@@ -81,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $_SESSION['user_name'] = $fullName;
                     $_SESSION['user_role'] = 'passenger';
 
-                    header('Location: passenger-dashboard.php');
+                    header('Location: ../../passenger-dashboard.php');
                     exit;
                 }
             }
@@ -91,14 +88,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Smart Bus</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="../assets/style.css">
 </head>
-
 <body>
     <div class="login-shell">
         <div class="login-card">
@@ -109,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="alert <?php echo $noticeType === 'success' ? 'alert-success' : 'alert-error'; ?>"><?php echo htmlspecialchars($notice); ?></div>
             <?php endif; ?>
 
-            <form method="post" action="index.php">
+            <form method="post" action="login.php">
                 <input type="hidden" name="action" value="login">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="form-group">
@@ -127,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <div class="divider">OR</div>
 
-            <form method="post" action="index.php">
+            <form method="post" action="login.php">
                 <input type="hidden" name="action" value="signup">
                 <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken, ENT_QUOTES, 'UTF-8'); ?>">
                 <div class="form-group">
@@ -154,5 +149,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 </body>
-
 </html>
+

@@ -1,17 +1,14 @@
 <?php
-require __DIR__ . '/frontend/pages/passenger-dashboard.php';
-?>
-<?php
 session_start();
-require __DIR__ . '/includes/db_connect.php';
+require __DIR__ . '/../../backend/includes/db_connect.php';
 
 if (empty($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ../../index.php');
     exit;
 }
 
 if (($_SESSION['user_role'] ?? '') !== 'passenger') {
-    header('Location: dashboard.php');
+    header('Location: ../../dashboard.php');
     exit;
 }
 
@@ -201,12 +198,12 @@ $history = $historyStmt->fetchAll();
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Passenger Dashboard - Smart Bus</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body class="passenger-page">
     <div class="topbar">
         <div>Smart Bus Passenger</div>
-        <div>Welcome, <?php echo e($_SESSION['user_name'] ?? 'Passenger'); ?> <span style="margin-left: 16px;">|</span> <a href="logout.php">Logout</a></div>
+        <div>Welcome, <?php echo e($_SESSION['user_name'] ?? 'Passenger'); ?> <span style="margin-left: 16px;">|</span> <a href="../../logout.php">Logout</a></div>
     </div>
     <div class="container dashboard">
         <h2>Passenger Dashboard</h2>
@@ -263,3 +260,4 @@ $history = $historyStmt->fetchAll();
     </div>
 </body>
 </html>
+

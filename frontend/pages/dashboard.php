@@ -1,19 +1,16 @@
 <?php
-require __DIR__ . '/frontend/pages/dashboard.php';
-?>
-<?php
 session_start();
 if (empty($_SESSION['user_id'])) {
-    header('Location: index.php');
+    header('Location: ../../index.php');
     exit;
 }
 
 if (($_SESSION['user_role'] ?? 'passenger') === 'passenger') {
-    header('Location: passenger-dashboard.php');
+    header('Location: ../../passenger-dashboard.php');
     exit;
 }
 
-require __DIR__ . '/includes/db_connect.php';
+require __DIR__ . '/../../backend/includes/db_connect.php';
 
 $notice = '';
 $noticeType = '';
@@ -174,7 +171,7 @@ $buses = $pdo->query('SELECT id, registration_number, make, model, year, bus_typ
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard - Smart Bus</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <link rel="stylesheet" href="../assets/style.css">
 </head>
 <body>
     <div class="topbar">
@@ -182,14 +179,14 @@ $buses = $pdo->query('SELECT id, registration_number, make, model, year, bus_typ
         <div>
             <span>Welcome, <?php echo htmlspecialchars($_SESSION['user_name']); ?></span>
             <span style="margin-left: 16px;">|</span>
-            <a href="logout.php">Logout</a>
+            <a href="../../logout.php">Logout</a>
         </div>
     </div>
 
     <div class="container dashboard">
         <h2>Dashboard</h2>
         <div class="action-bar">
-            <a class="btn primary-button" href="modules/admin/management.php">Open Management Modules</a>
+            <a class="btn primary-button" href="../../modules/admin/management.php">Open Management Modules</a>
         </div>
         <?php if ($notice): ?><div class="alert <?php echo $noticeType === 'success' ? 'alert-success' : 'alert-error'; ?>"><?php echo htmlspecialchars($notice); ?></div><?php endif; ?>
 
@@ -321,3 +318,4 @@ $buses = $pdo->query('SELECT id, registration_number, make, model, year, bus_typ
     </div>
 </body>
 </html>
+
