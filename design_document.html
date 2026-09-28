@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Smart Bus Transport System Design Document</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 50px auto;
+      max-width: 900px;
+      color: #1f2937;
+      line-height: 1.7;
+      background: #ffffff;
+    }
+    h1, h2, h3 { color: #111827; }
+    h1 { font-size: 30px; margin-bottom: 8px; }
+    h2 { font-size: 22px; margin-top: 28px; }
+    h3 { font-size: 18px; margin-top: 18px; }
+    p, li { font-size: 14px; }
+    ul { padding-left: 20px; }
+    .meta { color: #4b5563; font-size: 13px; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Smart Bus Transport System</h1>
+  <div class="meta">Design Document</div>
+
+  <div>
+    <h2>1. Introduction</h2>
+    <p>This document presents the system design for the Smart Bus Transport System, a web-based application designed to manage bus routes, schedules, bookings, payments, and passenger travel records. The project supports multiple user roles including administrators, operators, and passengers.</p>
+    <p>The system is intended to provide a practical solution for intercity and regional bus operations. It enables staff to register buses and routes, assign schedules, and track seat bookings, while passengers can search trips and book journeys efficiently.</p>
+  </div>
+
+  <div>
+    <h2>2. Objectives of the System</h2>
+    <ul>
+      <li>manage transport fleet information;</li>
+      <li>organize route records and schedule planning;</li>
+      <li>enable seat booking and payment capture;</li>
+      <li>issue tickets and maintain travel history;</li>
+      <li>provide role-based access to operational data.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2>3. Scope</h2>
+    <ul>
+      <li>user authentication and role-based access;</li>
+      <li>bus registration and status management;</li>
+      <li>route and district mapping;</li>
+      <li>trip schedule creation;</li>
+      <li>seat reservation and booking confirmation;</li>
+      <li>payment tracking and ticket issuance;</li>
+      <li>passenger travel history and records.</li>
+    </ul>
+    <p>The system is focused on the business flow for a passenger transport company and is suitable for a small to medium transport operation.</p>
+  </div>
+
+  <div>
+    <h2>4. Users and Roles</h2>
+    <h3>Administrator</h3>
+    <p>The administrator manages the overall platform and controls the core system records. Responsibilities include registering and monitoring buses, creating routes, managing trip schedules, and reviewing bookings.</p>
+
+    <h3>Operator</h3>
+    <p>The operator supports the daily running of the system by handling schedule setup and fleet visibility. This role works closely with routes and availability.</p>
+
+    <h3>Passenger</h3>
+    <p>The passenger represents a customer who wants to search available routes, choose a trip by date and destination, book a seat, complete payment, and receive a ticket.</p>
+  </div>
+
+  <div>
+    <h2>5. System Architecture</h2>
+    <p>The application follows a simple three-tier structure:</p>
+    <ol>
+      <li><strong>Presentation Layer:</strong> PHP pages and HTML forms</li>
+      <li><strong>Application Layer:</strong> PHP business logic and validation</li>
+      <li><strong>Data Layer:</strong> MySQL database with relational tables</li>
+    </ol>
+    <p>This structure is suitable for a standard server-side PHP project without requiring a full framework.</p>
+  </div>
+
+  <div>
+    <h2>6. Functional Design</h2>
+    <h3>Authentication Module</h3>
+    <p>The system authenticates users through the users table. The login process validates the email and password, verifies account status, and loads the appropriate session value.</p>
+
+    <h3>Bus Management Module</h3>
+    <p>The bus module stores vehicle information such as registration number, make and model, year, bus type, seating capacity, and current status.</p>
+
+    <h3>Route Management Module</h3>
+    <p>A route is defined by route code, origin, destination, districts, distance, fare, and status.</p>
+
+    <h3>Scheduling Module</h3>
+    <p>The scheduling module links routes and buses to create a travel assignment. Each schedule contains route, bus, travel date, departure time, arrival time, fare, available seats, and status.</p>
+
+    <h3>Booking and Payment Module</h3>
+    <p>The booking module allows passengers to book seats for a schedule. Each booking includes a reference number, user, schedule, seat number, amount, and status.</p>
+
+    <h3>Ticketing Module</h3>
+    <p>When a booking is confirmed, a ticket is generated with a ticket number, booking reference, and QR code identifier.</p>
+  </div>
+
+  <div>
+    <h2>7. Data Design</h2>
+    <p>The database is organized around relational entities. The main tables are users, drivers, buses, routes, schedules, bookings, payments, tickets, and travel_history.</p>
+    <p><strong>Core relationships:</strong></p>
+    <ul>
+      <li>one user can have many bookings;</li>
+      <li>one route can have many schedules;</li>
+      <li>one bus can be assigned to many schedules;</li>
+      <li>one schedule can have many bookings;</li>
+      <li>one booking can have one payment;</li>
+      <li>one booking can have one ticket;</li>
+      <li>one passenger can have many travel_history records.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2>8. Interface Design</h2>
+    <h3>Login and Registration Interface</h3>
+    <p>The system provides a login form and a passenger registration form. It is designed to be simple and easy to use with clear validation feedback.</p>
+
+    <h3>Admin Dashboard</h3>
+    <p>The admin dashboard shows route count, bus count, driver count, booking count, and operational management forms.</p>
+
+    <h3>Passenger Dashboard</h3>
+    <p>The passenger dashboard allows users to search trips by origin, district, destination, and date; review schedules; choose a seat; confirm booking; and view travel history.</p>
+  </div>
+
+  <div>
+    <h2>9. Security Design</h2>
+    <p>The current system includes session management, hashed passwords, CSRF validation, and role-based access control.</p>
+    <p><strong>Recommended production improvements:</strong> stronger input sanitization, encryption, activity logs, real payment gateways, and improved session security.</p>
+  </div>
+
+  <div>
+    <h2>10. Non-Functional Requirements</h2>
+    <ul>
+      <li>reliability;</li>
+      <li>usability;</li>
+      <li>maintainability;</li>
+      <li>scalability;</li>
+      <li>performance.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2>11. Deployment Design</h2>
+    <p>The system is designed for a standard web hosting environment with Apache or Nginx, PHP, and MySQL.</p>
+    <p>It is suitable for local deployment using XAMPP or a similar environment.</p>
+  </div>
+
+  <div>
+    <h2>12. Risk and Limitation Analysis</h2>
+    <ul>
+      <li>no live external payment integration;</li>
+      <li>limited analytics and reporting;</li>
+      <li>basic UI styling;</li>
+      <li>minimal automation and testing;</li>
+      <li>no advanced monitoring or audit tools.</li>
+    </ul>
+  </div>
+
+  <div>
+    <h2>13. Conclusion</h2>
+    <p>The Smart Bus Transport System is designed as a practical and functional web application for transport management and passenger booking. The architecture balances simplicity, maintainability, and operational usefulness.</p>
+    <p>The system successfully covers the main business workflow: users sign in, routes and buses are managed, trips are scheduled, passengers book seats, payments are recorded, and tickets are generated.</p>
+  </div>
+</body>
+</html>
