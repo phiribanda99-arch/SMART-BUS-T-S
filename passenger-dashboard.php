@@ -1,7 +1,4 @@
 <?php
-require __DIR__ . '/frontend/pages/passenger-dashboard.php';
-?>
-<?php
 session_start();
 require __DIR__ . '/includes/db_connect.php';
 
